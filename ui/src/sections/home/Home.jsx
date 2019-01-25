@@ -7,8 +7,8 @@ import CenteredImage from '~/components/centered-image'
 export default function Home() {
   return (
     <React.Fragment>
-      <h1>Employee reviews analysis</h1>
-      <Link to={'/analysis1'} >analysis1</Link>
+      <p>This app will help you find the job that most fits your needs amongst big tech companies.</p>
+      <p>Choose one of the analysis below to learn more.</p>
     </React.Fragment>
   )
 }
