@@ -3,6 +3,7 @@ import Papa from 'papaparse'
 
 
 export const AnalysisContext = React.createContext(null);
+export const AnalysisChoosingContext = React.createContext(null);
 
 
 export default class AnalysisDataProvider extends React.Component {
@@ -53,21 +54,16 @@ export default class AnalysisDataProvider extends React.Component {
   }
 
   render() {
+    const data_provider = {
+      loadData: this.loadData.bind(this),
+      state: this.state.state
+    };
     return (
-      <div>
-        <h3>Load analysis data</h3>
-        <button onClick={() => {this.loadData('small')}}>
-          Load small dataset
-        </button>
-        <button onClick={() => {this.loadData('full')}}>
-          Load full dataset
-        </button>
-        <p>State: {this.state.state}</p>
-        <hr />
-        <AnalysisContext.Provider value={this.state.csv_data}>
+      <AnalysisContext.Provider value={this.state.csv_data}>
+        <AnalysisChoosingContext.Provider value={data_provider}>
           {this.props.children}
-        </AnalysisContext.Provider>
-      </div>
+        </AnalysisChoosingContext.Provider>
+      </AnalysisContext.Provider>
     )
   }
 }

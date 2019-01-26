@@ -1,5 +1,9 @@
 import React from 'react'
 import {Link, Route} from 'react-router-dom'
+import Paper from '@material-ui/core/Paper';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
 
 import './base.css'
 
@@ -12,20 +16,28 @@ import AnalysisDataProvider from './analysis/AnalysisDataProvider'
 export default function Base() {
   return (
     <React.Fragment>
-      <h1>Employee reviews explorer</h1>
-      <Route exact={true} path="/" component={Home}/>
-      <div className="navigation">
-        <Route path="/a*" render={() => (
-          <Link to={'/'} style={{margin: 10}}>Home</Link>
-        )} />
-        <Link to={'/analysis1'} style={{margin: 10}}>Analysis 1</Link>
-        <Link to={'/analysis_comparison'} style={{margin: 10}}>Review Comparison</Link>
+      <div style={{maxWidth: 1000, margin: '40px auto', padding: 40}}>
+        <Paper style={{padding: 40}}>
+          <Typography component="h2" variant="h2" gutterBottom>Employee reviews explorer</Typography>
+          <Typography>Glassdoor data analysis tool</Typography>
+        </Paper>
+        <Paper style={{marginTop: 40}}>
+          <Route path="/" render={({ location }) => (
+            <Tabs value={location.pathname} variant="fullWidth">
+              <Tab label="Home" component={Link} to={'/'} value={'/'}/>
+              <Tab label="Data summary" component={Link} to={'/analysis1'} value={'/analysis1'}/>
+              <Tab label="Analysis" component={Link} to={'/analysis_comparison'} value={'/analysis_comparison'}/>
+            </Tabs>
+          )} />
+          <div style={{padding: 40}}>
+            <AnalysisDataProvider>
+              <Route exact={true} path="/" component={Home}/>
+              <Route path="/analysis1" component={Analysis1}/>
+              <Route path="/analysis_comparison" component={ReviewComparison}/>
+            </AnalysisDataProvider>
+          </div>
+        </Paper>
       </div>
-
-      <AnalysisDataProvider>
-        <Route path="/analysis1" component={Analysis1}/>
-        <Route path="/analysis_comparison" component={ReviewComparison}/>
-      </AnalysisDataProvider>
     </React.Fragment>
   )
 }

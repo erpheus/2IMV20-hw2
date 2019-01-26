@@ -85,10 +85,6 @@ export default class ReviewComparison extends React.Component {
 
     return (
       <div>
-        <p>data</p>
-        <p>Number of rows: {csv_data.length}</p>
-        <p>Averages: {JSON.stringify(avgs_list)}</p>
-        <hr />
         <RadarChart outerRadius={250} width={730} height={800} data={avgs_list}>
           <PolarGrid />
           <PolarAngleAxis dataKey="metric" />
