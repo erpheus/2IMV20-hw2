@@ -36,8 +36,14 @@ export default class AnalysisDataProvider extends React.Component {
           {...prev_state, state: 'parsing'}
         ));
         Papa.parse(myData, {
+          header: true,
+          dynamicTyping: true,
           complete: results => {
             results.data.pop(); // Remove empty last row
+            results.data = results.data.map(row => ({
+              ...row,
+              "employee-type": row["job-title"].split(' - ')[0]
+            }));
             this.setState((prev_state) => (
               {...prev_state, 'csv_data': results.data, state: 'ready'}
             ));
