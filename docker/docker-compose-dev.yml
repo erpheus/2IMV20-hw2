@@ -9,4 +9,4 @@ services:
       - 'NODE_ENV=dev'
     command: /bin/bash 
     ports:
-      - '${UI_PORT}:3232'
+      - '${UI_PORT}:3233'

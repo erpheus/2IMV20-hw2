@@ -6,6 +6,16 @@ export const AnalysisContext = React.createContext(null);
 export const AnalysisChoosingContext = React.createContext(null);
 
 
+const CompanyColors = {
+  facebook: '#225ebf',
+  amazon: '#ffdd49',
+  netflix: '#f44522',
+  google: '#449b39',
+  microsoft: '#6dffe4',
+  apple: '#f740d2'
+}
+
+
 export default class AnalysisDataProvider extends React.Component {
   constructor(props) {
     super(props);
@@ -36,21 +46,55 @@ export default class AnalysisDataProvider extends React.Component {
         this.setState((prev_state) => (
           {...prev_state, state: 'parsing'}
         ));
-        Papa.parse(myData, {
-          header: true,
-          dynamicTyping: true,
-          complete: results => {
-            results.data.pop(); // Remove empty last row
-            results.data = results.data.map(row => ({
-              ...row,
-              "employee-type": row["job-title"].split(' - ')[0]
-            }));
-            this.setState((prev_state) => (
-              {...prev_state, 'csv_data': results.data, state: 'ready'}
-            ));
-          }
-        });
+        this.parseResults(myData)
       });
+  }
+
+  parseResults(result_str_data) {
+    setTimeout(() => {
+      Papa.parse(result_str_data, {
+        header: true,
+        dynamicTyping: true,
+        complete: results => this.enhanceResults(results.data)
+      });
+    }, 50) // Let some time to update to parsing
+  }
+
+  enhanceResults(result_data) {
+    result_data.pop(); // Remove empty last row
+    result_data = result_data.map(row => ({
+      ...row,
+      "employee-type": row["job-title"].split(' - ')[0],
+      "time": Date.parse(row["dates"])
+    }));
+    const times = result_data
+      .map(e => e.time)
+      .filter(e => e != "none" && !isNaN(e) && e !== null && e !== undefined);
+    console.log("min")
+    console.log(times.reduce((v1, v2) => Math.min(v1, v2)))
+    this.setState((prev_state) => ({
+      ...prev_state,
+      'context_data': {
+        raw_data: result_data,
+        colors: {companies: CompanyColors},
+        filters: {
+          time: {
+            since: times.reduce((v1, v2) => Math.min(v1, v2)),
+            to: times.reduce((v1, v2) => Math.max(v1, v2))
+          },
+          company: [...new Set(result_data.map(r => r["company"]))],
+          rating: [
+            "overall-ratings",
+            "work-balance-stars",
+            "culture-values-stars",
+            "carrer-opportunities-stars",
+            "comp-benefit-stars",
+            "senior-mangemnet-stars"
+          ]
+        }
+      },
+      state: 'ready'
+    }));
   }
 
   render() {
@@ -59,7 +103,7 @@ export default class AnalysisDataProvider extends React.Component {
       state: this.state.state
     };
     return (
-      <AnalysisContext.Provider value={this.state.csv_data}>
+      <AnalysisContext.Provider value={this.state.context_data}>
         <AnalysisChoosingContext.Provider value={data_provider}>
           {this.props.children}
         </AnalysisChoosingContext.Provider>

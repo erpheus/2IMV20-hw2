@@ -1,6 +1,10 @@
 import React from 'react'
 import Papa from 'papaparse'
 
+import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+
 
 import { AnalysisChoosingContext } from './AnalysisDataProvider'
 
@@ -14,15 +18,15 @@ export default class AnalysisChooser extends React.Component {
     }
 
     return (
-      <div>
-        <h3>Load analysis data</h3>
-        <button onClick={() => {analysis_data.loadData('small')}}>
+      <div style={{marginTop: 50}}>
+        <Typography component="h4" variant="h4" gutterBottom>Load analysis data</Typography>
+        <Button variant="contained" onClick={() => {analysis_data.loadData('small')}}>
           Load small dataset
-        </button>
-        <button onClick={() => {analysis_data.loadData('full')}}>
+        </Button>
+        <Button style={{marginLeft: 40}} variant="contained" onClick={() => {analysis_data.loadData('full')}}>
           Load full dataset
-        </button>
-        <p>State: {analysis_data.state}</p>
+        </Button>
+        <Typography style={{marginTop: 20}}>State: {analysis_data.state}</Typography>
       </div>
     )
   }

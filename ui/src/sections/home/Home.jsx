@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <React.Fragment>
       <Typography>This app will help you find the job that most fits your needs amongst big tech companies.</Typography>
-      <Typography>Choose one of the analysis below to learn more.</Typography>
+      <Typography>Choose one of the datasets below and navigate to the other tabs to learn more.</Typography>
       <AnalysisChooser />
     </React.Fragment>
   )

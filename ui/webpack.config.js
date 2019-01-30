@@ -7,7 +7,7 @@ module.exports = {
   mode: 'development',
   entry: [
     'react-hot-loader/patch',
-    `webpack-dev-server/client?http://localhost:3232`,
+//    `webpack-dev-server/client?http://localhost:3233`,
     'webpack/hot/only-dev-server',
     './src/index.jsx',
   ],
@@ -18,7 +18,7 @@ module.exports = {
   },
   devServer: {
     host: '0.0.0.0',
-    port: 3232,
+    port: 3233,
     hot: true,
     publicPath: '/',
     historyApiFallback: true,
