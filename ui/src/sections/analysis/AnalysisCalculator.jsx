@@ -18,21 +18,48 @@ export default class AnalysisCalculator extends React.Component {
     this.compartimentalize = memoize(this.compartimentalize);
   }
 
-  compartimentalize(csv_data) {
-    
+  compartimentalize(csv_data, filters) {
+    const time = filters.time;
+    const timeparts = {};
+    this.timekeyssinceto(time.since, time.to).forEach(k => {timeparts[k] = []});
+    for (var i = 0; i < csv_data.length; i++) {
+      if (!csv_data[i].time || csv_data[i].time == "none") {
+        continue
+      }
+      timeparts[this.timekeyfor(csv_data[i].time)].push(csv_data[i]);
+    }
+    Object.keys(timeparts).map((tpk, i) => {
+      timeparts[tpk] = this.averages(timeparts[tpk], filters);
+    });
+    return timeparts;
   }
 
-  averages() {
-    const csv_data = this.context.raw_data;
-    const variables = this.context.filters.rating;
-    const companies = this.context.filters.company;
-    const time = this.context.filters.time;
+  timekeyssinceto(since, to) {
+    const timekeys = [];
+    const src_d = new Date(since);
+    const dst_d = new Date(to);
+    for (let y = src_d.getFullYear(); y <= dst_d.getFullYear(); y++) {
+      const minMonth = y == src_d.getFullYear() ? src_d.getMonth() : 0;
+      const maxMonth = y == dst_d.getFullYear() ? dst_d.getMonth() : 11;
+      for (let m = minMonth; m <= maxMonth; m++) {
+        timekeys.push(`${m+1}-${y}`);
+      }
+    }
+    return timekeys;
+  }
+
+  timekeyfor(intdate) {
+    const d = new Date(intdate);
+    return `${d.getMonth()+1}-${d.getFullYear()}`;
+  }
+
+  averages(csv_data, filters) {
+    const variables = filters.rating;
+    const companies = filters.company;
 
     const group_variable = "company"
     const groups = companies;
     const avgs = {};
-
-
 
     variables.forEach(vname => {
       avgs[vname] = {}
@@ -46,10 +73,6 @@ export default class AnalysisCalculator extends React.Component {
     });
 
     for (var i = 0; i < csv_data.length; i++) {
-      if (csv_data[i].time < time.since || csv_data[i].time > time.to) {
-        continue
-      }
-
       variables.forEach(vname => {
         if (csv_data[i][vname] !== null && csv_data[i][vname] !== undefined && csv_data[i][vname] !== "none") {
           avgs[vname][csv_data[i][group_variable]] += csv_data[i][vname];
@@ -80,6 +103,69 @@ export default class AnalysisCalculator extends React.Component {
     return {avgs, avgs_list, avgs_star_list}
   }
 
+  filterAverages(timeparts, filters) {
+    const res = {};
+    this.timekeyssinceto(filters.time.since, filters.time.to).forEach(k => {
+      res[k] = timeparts[k];
+    });
+    return res;
+  }
+
+  joinAverages(timeparts, filters) {
+    return Object.keys(timeparts).map(k => timeparts[k]).reduce((t1, t2) => this.joinTwoAverages(t1, t2, filters));
+    return this.joinTwoAverages(
+      timeparts[Object.keys(timeparts)[0]],
+      timeparts[Object.keys(timeparts)[0]],
+      filters
+    )
+  }
+
+  joinTwoAverages(avgs1, avgs2, filters) {
+    const res = {avgs: {}, avgs_list: [], avgs_star_list: {}}
+    const companycounts = {};
+    filters.rating.forEach(rating => {
+      const avgs_rating = {};
+      const avgs_list_rating = {metric: rating};
+      const avgs_star_list_rating = [];
+
+      [0,1,2,3,4,5].forEach(i => {avgs_star_list_rating.push({stars: i})});
+
+      filters.company.map(company => {
+        const count1 = avgs1.avgs[rating][`${company}_count`];
+        const count2 = avgs2.avgs[rating][`${company}_count`];
+
+        avgs_rating[`${company}_count`] = count1 + count2;
+        avgs_rating[company] = count1 > 0 ? avgs1.avgs[rating][company] * count1 : 0 
+        avgs_rating[company] += count2 > 0 ? avgs2.avgs[rating][company] * count2 : 0
+        avgs_rating[company] = (count1 + count2) > 0 ? avgs_rating[company] / (count1 + count2) : NaN;
+
+        avgs_list_rating[company] = avgs_rating[company];
+
+        [0,1,2,3,4,5].forEach(i => {
+          avgs_rating[`${company}_${i}`] = count1 > 0 ? avgs1.avgs[rating][`${company}_${i}`] * count1 : 0 
+          avgs_rating[`${company}_${i}`] += count2 > 0 ? avgs2.avgs[rating][`${company}_${i}`] * count2 : 0
+          avgs_rating[`${company}_${i}`] = (count1 + count2) > 0 ? avgs_rating[`${company}_${i}`] / (count1 + count2) : NaN;
+
+          avgs_star_list_rating[i][company] = avgs_rating[`${company}_${i}`];
+        });
+
+      });
+
+      res.avgs[rating] = avgs_rating;
+      res.avgs_list.push(avgs_list_rating)
+      res.avgs_star_list[rating] = avgs_star_list_rating;
+    })
+    return res;
+  }
+
+  visualizedData() {
+    let res = this.context.raw_data;
+    res = this.compartimentalize(res, this.context.initial_filters);
+    res = this.filterAverages(res, this.context.filters);
+    res = this.joinAverages(res, this.context.filters);
+    return res;
+  }
+
   render() {
     let src_data = this.context;
     if (!src_data) {
@@ -90,7 +176,7 @@ export default class AnalysisCalculator extends React.Component {
       )
     }
 
-    const processed_data = this.averages();
+    const processed_data = this.visualizedData();
 
     return (
       <AnalysisContext.Provider value={{...src_data, processed_data}}>

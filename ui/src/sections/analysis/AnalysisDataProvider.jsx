@@ -70,28 +70,28 @@ export default class AnalysisDataProvider extends React.Component {
     const times = result_data
       .map(e => e.time)
       .filter(e => e != "none" && !isNaN(e) && e !== null && e !== undefined);
-    console.log("min")
-    console.log(times.reduce((v1, v2) => Math.min(v1, v2)))
+    const initial_filters = {
+      time: {
+        since: times.reduce((v1, v2) => Math.min(v1, v2)),
+        to: times.reduce((v1, v2) => Math.max(v1, v2))
+      },
+      company: [...new Set(result_data.map(r => r["company"]))],
+      rating: [
+        "overall-ratings",
+        "work-balance-stars",
+        "culture-values-stars",
+        "carrer-opportunities-stars",
+        "comp-benefit-stars",
+        "senior-mangemnet-stars"
+      ]
+    };
     this.setState((prev_state) => ({
       ...prev_state,
       'context_data': {
         raw_data: result_data,
         colors: {companies: CompanyColors},
-        filters: {
-          time: {
-            since: times.reduce((v1, v2) => Math.min(v1, v2)),
-            to: times.reduce((v1, v2) => Math.max(v1, v2))
-          },
-          company: [...new Set(result_data.map(r => r["company"]))],
-          rating: [
-            "overall-ratings",
-            "work-balance-stars",
-            "culture-values-stars",
-            "carrer-opportunities-stars",
-            "comp-benefit-stars",
-            "senior-mangemnet-stars"
-          ]
-        }
+        filters: initial_filters,
+        initial_filters
       },
       state: 'ready'
     }));
