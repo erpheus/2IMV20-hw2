@@ -1,18 +1,21 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography';
-import Slider from '@material-ui/lab/Slider';
+import Grid from '@material-ui/core/Grid';
 
 import { AnalysisContext } from './AnalysisDataProvider'
 import AnalysisCalculator from './AnalysisCalculator'
 import StarsRadarChart from './charts/StarsRadarChart'
 import RatingAreaChart from './charts/RatingAreaChart'
+import TimeRatingChart from './charts/TimeRatingChart'
+import TimePicker from './charts/TimePicker'
 
 
 export default class ReviewComparison extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      new_filters: null
+      new_filters: null,
+      rating: 'overall-ratings'
     }
   }
 
@@ -24,6 +27,10 @@ export default class ReviewComparison extends React.Component {
         ...changed_filters
       }
     }))
+  }
+
+  setRating(new_rating){
+    this.setState(s => ({...s, rating: new_rating}));
   }
 
   render() {
@@ -43,19 +50,17 @@ export default class ReviewComparison extends React.Component {
 
     return (
       <AnalysisContext.Provider value={new_context}>
-        <Slider
-          value={new_context.filters.time.since}
-          min={this.context.filters.time.since}
-          max={this.context.filters.time.to}
-          onChange={(e, v) => {
-            this.filtersUpdate({
-              time: {since: v, to: new_context.filters.time.to}
-            })
-          }}
-        />
         <AnalysisCalculator>
-          <StarsRadarChart />
-          <RatingAreaChart rating="overall-ratings" />
+          <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
+          <TimeRatingChart rating={this.state.rating} />
+          <Grid container spacing={24} style={{marginTop: 30}}>
+            <Grid item xs={12} sm={6}>
+              <StarsRadarChart rating={this.state.rating} onRatingChange={this.setRating.bind(this)}/>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <RatingAreaChart rating={this.state.rating} />
+            </Grid>
+          </Grid>
         </AnalysisCalculator>
       </AnalysisContext.Provider>
     )

@@ -19,13 +19,12 @@ export default class RatingAreaChart extends React.Component {
 
     return (
       <React.Fragment>
-        <Typography variant="h4">{rating}</Typography>
         <div style={{margin: '0 auto'}}>
           <ResponsiveContainer width="100%" height={400}>
             <AreaChart data={processed_data.avgs_star_list[rating]} margin={{top: 10, right: 30, left: 0, bottom: 0}}>
               <CartesianGrid strokeDasharray="3 3"/>
               <XAxis dataKey="stars"/>
-              <YAxis/>
+              <YAxis domain={[0,1]}/>
               <Tooltip/>
               {company_list.map(company => (
                 <Area type='monotone' dataKey={company} stroke={company_colors[company]} fill={company_colors[company]} key={company} fillOpacity={0.3}  />

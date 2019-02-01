@@ -16,6 +16,7 @@ export default class AnalysisCalculator extends React.Component {
 
     }
     this.compartimentalize = memoize(this.compartimentalize);
+    this.allTimedData = memoize(this.allTimedData);
   }
 
   compartimentalize(csv_data, filters) {
@@ -23,13 +24,13 @@ export default class AnalysisCalculator extends React.Component {
     const timeparts = {};
     this.timekeyssinceto(time.since, time.to).forEach(k => {timeparts[k] = []});
     for (var i = 0; i < csv_data.length; i++) {
-      if (!csv_data[i].time || csv_data[i].time == "none") {
+      if (!csv_data[i].time || csv_data[i].time == "none" || csv_data[i].time < 1170275476000) {
         continue
       }
       timeparts[this.timekeyfor(csv_data[i].time)].push(csv_data[i]);
     }
     Object.keys(timeparts).map((tpk, i) => {
-      timeparts[tpk] = this.averages(timeparts[tpk], filters);
+      timeparts[tpk] = {time: tpk, ...this.averages(timeparts[tpk], filters)};
     });
     return timeparts;
   }
@@ -42,7 +43,7 @@ export default class AnalysisCalculator extends React.Component {
       const minMonth = y == src_d.getFullYear() ? src_d.getMonth() : 0;
       const maxMonth = y == dst_d.getFullYear() ? dst_d.getMonth() : 11;
       for (let m = minMonth; m <= maxMonth; m++) {
-        timekeys.push(`${m+1}-${y}`);
+        timekeys.push(`${y}-${('0' + (m+1)).slice(-2)}`);
       }
     }
     return timekeys;
@@ -50,7 +51,7 @@ export default class AnalysisCalculator extends React.Component {
 
   timekeyfor(intdate) {
     const d = new Date(intdate);
-    return `${d.getMonth()+1}-${d.getFullYear()}`;
+    return `${d.getFullYear()}-${('0' + (d.getMonth()+1)).slice(-2)}`;
   }
 
   averages(csv_data, filters) {
@@ -62,7 +63,7 @@ export default class AnalysisCalculator extends React.Component {
     const avgs = {};
 
     variables.forEach(vname => {
-      avgs[vname] = {}
+      avgs[vname] = {total_count: 0}
       groups.forEach(gname => {
         avgs[vname][gname] = 0;
         avgs[vname][`${gname}_count`] = 0;
@@ -75,6 +76,7 @@ export default class AnalysisCalculator extends React.Component {
     for (var i = 0; i < csv_data.length; i++) {
       variables.forEach(vname => {
         if (csv_data[i][vname] !== null && csv_data[i][vname] !== undefined && csv_data[i][vname] !== "none") {
+          avgs[vname].total_count += 1;
           avgs[vname][csv_data[i][group_variable]] += csv_data[i][vname];
           avgs[vname][`${csv_data[i][group_variable]}_count`] += 1;
           avgs[vname][`${csv_data[i][group_variable]}_${Math.round(csv_data[i][vname])}`] += 1;
@@ -158,12 +160,18 @@ export default class AnalysisCalculator extends React.Component {
     return res;
   }
 
+  allTimedData(compartimentalized) {
+    return Object.keys(compartimentalized).sort().map(k => compartimentalized[k]);
+  }
+
   visualizedData() {
     let res = this.context.raw_data;
     res = this.compartimentalize(res, this.context.initial_filters);
+    const all_timed_data = this.allTimedData(res);
     res = this.filterAverages(res, this.context.filters);
+    const timed_data = Object.keys(res).sort().map(k => res[k]);
     res = this.joinAverages(res, this.context.filters);
-    return res;
+    return {processed_data: res, timed_data, all_timed_data};
   }
 
   render() {
@@ -176,10 +184,10 @@ export default class AnalysisCalculator extends React.Component {
       )
     }
 
-    const processed_data = this.visualizedData();
+    const extra_data = this.visualizedData();
 
     return (
-      <AnalysisContext.Provider value={{...src_data, processed_data}}>
+      <AnalysisContext.Provider value={{...src_data, ...extra_data}}>
         {this.props.children}
       </AnalysisContext.Provider>
     )

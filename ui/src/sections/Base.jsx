@@ -16,7 +16,7 @@ import AnalysisDataProvider from './analysis/AnalysisDataProvider'
 export default function Base() {
   return (
     <React.Fragment>
-      <div style={{maxWidth: 1000, margin: '40px auto', padding: 40}}>
+      <div style={{maxWidth: 1400, margin: '40px auto', padding: 40}}>
         <Paper style={{padding: 40}}>
           <Typography component="h2" variant="h2" gutterBottom>Employee reviews explorer</Typography>
           <Typography>Glassdoor data analysis tool</Typography>

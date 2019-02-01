@@ -69,7 +69,7 @@ export default class AnalysisDataProvider extends React.Component {
     }));
     const times = result_data
       .map(e => e.time)
-      .filter(e => e != "none" && !isNaN(e) && e !== null && e !== undefined);
+      .filter(e => e != "none" && !isNaN(e) && e !== null && e !== undefined && e >= 1170275476000);
     const initial_filters = {
       time: {
         since: times.reduce((v1, v2) => Math.min(v1, v2)),
