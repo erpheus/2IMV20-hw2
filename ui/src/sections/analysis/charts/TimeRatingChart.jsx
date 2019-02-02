@@ -10,13 +10,21 @@ const d3 = require('d3-shape')
 import { AnalysisContext } from '../AnalysisDataProvider'
 
 export default class TimeRatingChart extends React.Component {
+
   constructor(props, context) {
     super(props)
     this.state = {
       min: 0,
-      max: Math.max(...context.all_timed_data.map(e => Math.max(...context.filters.company.map(c => e.avgs[props.rating][`${c}_count`]).filter(n => !Number.isNaN(n)))))
+      max: Math.max(...context.all_timed_data.map(e => Math.max(...context.filters.company.map(c => e.avgs[props.rating][this.data_key_f(c)]).filter(n => !Number.isNaN(n)))))
     }
   } 
+
+  data_key_f(company) {
+    if (this.props.count) {
+      return `${company}_count`;
+    }
+    return company;
+  }
 
   render() {
     const { colors, filters, timed_data, all_timed_data } = this.context;
@@ -38,9 +46,9 @@ export default class TimeRatingChart extends React.Component {
               <YAxis domain={[this.state.min, this.state.max]}/>
               <Tooltip/>
               {company_list.map(company => (
-                <Line legendType="square" name={company} type={curve_type} dataKey={`${company}_count`} stroke={company_colors[company]} key={company} dot={false} activeDot={true} />
+                <Line legendType="square" name={company} type={curve_type} dataKey={this.data_key_f(company)} stroke={company_colors[company]} key={company} dot={false} activeDot={true} />
               ))}
-              <Legend  />
+              { this.props.legend ? <Legend  /> : null }
             </LineChart>
           </ResponsiveContainer>
         </div>
