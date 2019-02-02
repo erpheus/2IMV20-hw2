@@ -27,8 +27,8 @@ export default function Base() {
             <Tabs value={location.pathname} variant="fullWidth">
               <Tab label="Home" component={Link} to={'/'} value={'/'}/>
               <Tab label="Data summary" component={Link} to={'/analysis1'} value={'/analysis1'}/>
-              <Tab label="Rating Analysis" component={Link} to={'/analysis_rating'} value={'/analysis_comparison'}/>
-              <Tab label="Text Analysis" component={Link} to={'/analysis_text'} value={'/analysis_comparison'}/>
+              <Tab label="Rating Analysis" component={Link} to={'/analysis_rating'} value={'/analysis_rating'}/>
+              <Tab label="Text Analysis" component={Link} to={'/analysis_text'} value={'/analysis_text'}/>
             </Tabs>
           )} />
           <div style={{padding: 40}}>
