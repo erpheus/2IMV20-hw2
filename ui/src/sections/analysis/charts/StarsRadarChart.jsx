@@ -26,7 +26,7 @@ export default class StarsRadarChart extends React.Component {
                 let style = {cursor: 'pointer'}
                 const rating = filters.rating[props.index]
                 if (this.props.rating == rating) {
-                  style = {fontWeight: 'bold'};
+                  style = {fontWeight: 'bold', fontSize: '1.3em'};
                 }
                 return (<Text {...props} style={style} className="recharts-polar-angle-axis-tick-value">{rating}</Text>)
               }}
