@@ -1,7 +1,7 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography';
 import {
-  ResponsiveContainer, LineChart, Brush
+  ResponsiveContainer, LineChart, Brush, Line
 } from 'recharts'
 
 
@@ -28,14 +28,16 @@ export default class TimePicker extends React.Component {
 
   render() {
     const { all_timed_data } = this.context;
-    //console.log('state', this.state)
-
     return (
       <React.Fragment>
         <div style={{margin: '0 auto'}}>
           <ResponsiveContainer width="100%" height={50}>
             <LineChart data={all_timed_data}>
-              <Brush height={30} stroke="#8884d8" dataKey="time" onChange={e => this.onBrushChange(e)}/>
+              <Brush height={30} dataKey="time" onChange={e => this.onBrushChange(e)}>
+                <LineChart data={all_timed_data}>
+                  <Line  type="monotone" dataKey="total_count" stroke="#333333" dot={false} activeDot={false} />
+                </LineChart>
+              </Brush>
             </LineChart>
           </ResponsiveContainer>
         </div>

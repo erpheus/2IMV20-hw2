@@ -73,14 +73,18 @@ export default class AnalysisCalculator extends React.Component {
       })
     });
 
+    let total_count = 0;
     for (var i = 0; i < csv_data.length; i++) {
+      let at_least_one = false;
       variables.forEach(vname => {
         if (csv_data[i][vname] !== null && csv_data[i][vname] !== undefined && csv_data[i][vname] !== "none") {
           avgs[vname].total_count += 1;
+          at_least_one = true;
           avgs[vname][csv_data[i][group_variable]] += csv_data[i][vname];
           avgs[vname][`${csv_data[i][group_variable]}_count`] += 1;
           avgs[vname][`${csv_data[i][group_variable]}_${Math.round(csv_data[i][vname])}`] += 1;
         }
+        if (at_least_one) {total_count += 1}
       })
     }
     const avgs_list = []
@@ -102,7 +106,7 @@ export default class AnalysisCalculator extends React.Component {
       })
       avgs_list.push(list_element);
     });
-    return {avgs, avgs_list, avgs_star_list}
+    return {avgs, avgs_list, avgs_star_list, total_count}
   }
 
   filterAverages(timeparts, filters) {
