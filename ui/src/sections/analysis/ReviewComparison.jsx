@@ -1,13 +1,29 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import Modal from '@material-ui/core/Modal';
+import SettingsIcon from '@material-ui/icons/Settings';
+import Paper from '@material-ui/core/Paper';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import Input from '@material-ui/core/Input';
 
 import { AnalysisContext } from './AnalysisDataProvider'
 import AnalysisCalculator from './AnalysisCalculator'
 import StarsRadarChart from './charts/StarsRadarChart'
 import RatingAreaChart from './charts/RatingAreaChart'
+import RatingBubbleChart from './charts/RatingBubbleChart'
 import TimeRatingChart from './charts/TimeRatingChart'
 import TimePicker from './charts/TimePicker'
+
+import './charts/charts.css'
+
+
+const starscharts = {
+  'bubble': RatingBubbleChart,
+  'area': RatingAreaChart
+}
 
 
 export default class ReviewComparison extends React.Component {
@@ -15,7 +31,9 @@ export default class ReviewComparison extends React.Component {
     super(props);
     this.state = {
       new_filters: null,
-      rating: 'overall-ratings'
+      rating: 'overall-ratings',
+      modalOpen: false,
+      starschart: 'bubble'
     }
   }
 
@@ -48,21 +66,51 @@ export default class ReviewComparison extends React.Component {
       };
     }
 
+    const Starschart = starscharts[this.state.starschart];
+
     return (
-      <AnalysisContext.Provider value={new_context}>
-        <AnalysisCalculator>
-          <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
-          <TimeRatingChart rating={this.state.rating} />
-          <Grid container spacing={24} style={{marginTop: 30}}>
-            <Grid item xs={12} sm={6}>
-              <StarsRadarChart rating={this.state.rating} onRatingChange={this.setRating.bind(this)}/>
+      <div style={{position: 'relative'}}>
+        <AnalysisContext.Provider value={new_context}>
+          <AnalysisCalculator>
+            <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
+            <TimeRatingChart rating={this.state.rating} />
+            <Grid container spacing={24} style={{marginTop: 30}}>
+              <Grid item xs={12} sm={6}>
+                <StarsRadarChart rating={this.state.rating} onRatingChange={this.setRating.bind(this)}/>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Starschart rating={this.state.rating} />
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <RatingAreaChart rating={this.state.rating} />
-            </Grid>
-          </Grid>
-        </AnalysisCalculator>
-      </AnalysisContext.Provider>
+          </AnalysisCalculator>
+        </AnalysisContext.Provider>
+
+        <div style={{position: 'absolute', bottom: '100%', left: '100%', cursor: 'pointer'}}>
+          <SettingsIcon onClick={() => {this.setState(s => ({...s, modalOpen: true}))}} />
+        </div>
+
+        <Modal
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          open={this.state.modalOpen}
+          onClose={() => {this.setState(s => ({...s, modalOpen: false}))}}
+        >
+          <Paper style={{position: 'absolute', top: 'calc(50% - 100px)', left: 'calc(50% - 200px)', height: 200, width: 400, padding: 40}}>
+            <InputLabel shrink style={{marginRight: 20}}>
+              Stars Chart type
+            </InputLabel>
+            <Select
+              value={this.state.starschart}
+              onChange={e => {this.setState(s => {console.log(e); return ({...s, starschart: e.target.value})})}}
+              displayEmpty
+              name="starschart"
+            >
+              <MenuItem value={'bubble'}>Bubble Chart</MenuItem>
+              <MenuItem value={'area'}>Area Chart</MenuItem>
+            </Select>
+          </Paper>
+        </Modal>
+      </div>
     )
   }
 }
