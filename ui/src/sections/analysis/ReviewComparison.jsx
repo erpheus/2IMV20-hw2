@@ -14,6 +14,7 @@ import AnalysisCalculator from './AnalysisCalculator'
 import StarsRadarChart from './charts/StarsRadarChart'
 import RatingAreaChart from './charts/RatingAreaChart'
 import RatingBubbleChart from './charts/RatingBubbleChart'
+import RatingStackedBarChart from './charts/RatingStackedBarChart'
 import TimeRatingChart from './charts/TimeRatingChart'
 import TimePicker from './charts/TimePicker'
 
@@ -22,7 +23,8 @@ import './charts/charts.css'
 
 const starscharts = {
   'bubble': RatingBubbleChart,
-  'area': RatingAreaChart
+  'area': RatingAreaChart,
+  'bar': RatingStackedBarChart
 }
 
 
@@ -108,6 +110,7 @@ export default class ReviewComparison extends React.Component {
             >
               <MenuItem value={'bubble'}>Bubble Chart</MenuItem>
               <MenuItem value={'area'}>Area Chart</MenuItem>
+              <MenuItem value={'bar'}>Stacked bar Chart</MenuItem>
             </Select>
           </Paper>
         </Modal>
