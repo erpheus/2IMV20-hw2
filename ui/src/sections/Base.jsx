@@ -10,7 +10,8 @@ import './base.css'
 import Home from './home/Home'
 
 import Analysis1 from './analysis/Analysis1'
-import ReviewComparison from './analysis/ReviewComparison'
+import RatingComparison from './analysis/RatingComparison'
+import TextComparison from './analysis/TextComparison'
 import AnalysisDataProvider from './analysis/AnalysisDataProvider'
 
 export default function Base() {
@@ -26,14 +27,16 @@ export default function Base() {
             <Tabs value={location.pathname} variant="fullWidth">
               <Tab label="Home" component={Link} to={'/'} value={'/'}/>
               <Tab label="Data summary" component={Link} to={'/analysis1'} value={'/analysis1'}/>
-              <Tab label="Analysis" component={Link} to={'/analysis_comparison'} value={'/analysis_comparison'}/>
+              <Tab label="Rating Analysis" component={Link} to={'/analysis_rating'} value={'/analysis_comparison'}/>
+              <Tab label="Text Analysis" component={Link} to={'/analysis_text'} value={'/analysis_comparison'}/>
             </Tabs>
           )} />
           <div style={{padding: 40}}>
             <AnalysisDataProvider>
               <Route exact={true} path="/" component={Home}/>
               <Route path="/analysis1" component={Analysis1}/>
-              <Route path="/analysis_comparison" component={ReviewComparison}/>
+              <Route path="/analysis_rating" component={RatingComparison}/>
+              <Route path="/analysis_text" component={TextComparison} />
             </AnalysisDataProvider>
           </div>
         </Paper>
