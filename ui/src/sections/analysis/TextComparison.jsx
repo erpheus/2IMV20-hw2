@@ -8,6 +8,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
+import Joyride from 'react-joyride';
+
 
 import { AnalysisContext } from './AnalysisDataProvider'
 import AnalysisCalculator from './AnalysisCalculator'
@@ -18,6 +20,21 @@ import ChartBorder from './charts/ChartBorder'
 
 import './charts/charts.css'
 
+
+const steps = [
+  {
+    target: '#timepicker',
+    content: "Choose here a time range to observe. The line shown inside indicates the amount of messages over time. If you narrow your search space to the last months you'll probably get more accurate results as there are more reviews in the dataset." ,
+  },
+  {
+    target: '#wordchart',
+    content: "This chart has the most common differentiating words for each of the companies. Note that the words on each side of the chart are different, each belong to one company. The size of the bars gives an idea of how common and differentiating a certain word is. Don't forget to check the settings to try different tokenization strategies, which will give different results."
+  },
+  {
+    target: '#settingsbutton',
+    content: 'Here are the settings.'
+  }
+]
 
 
 export default class TextComparison extends React.Component {
@@ -30,7 +47,8 @@ export default class TextComparison extends React.Component {
       company_left: '',
       company_right: '',
       text: '',
-      tfidfType: 'ngram2'
+      tfidfType: 'ngram2',
+      joyrideDone: false
     }
   }
 
@@ -67,6 +85,7 @@ export default class TextComparison extends React.Component {
 
     return (
       <div style={{position: 'relative'}}>
+        <Joyride steps={steps} disableBeacon={true} continuous={true} scrollToFirstStep={true} run={!!(is_valid_configuration && !this.state.joyrideDone)} callback={({status}) => { if (status == 'finished') { this.setState(s => ({...s, joyrideDone: true})) } }}/>
         <div style={{textAlign: 'center', marginBottom: 20}}>
           <div style={{marginLeft: 20, marginRight: 20, display: 'inline-block'}}>
             <InputLabel shrink style={{marginRight: 20}}>
@@ -126,10 +145,10 @@ export default class TextComparison extends React.Component {
             ? (
               <AnalysisContext.Provider value={new_context}>
                 <AnalysisCalculator>
-                  <ChartBorder title="Time range selector (with #total data entries inside)">
+                  <ChartBorder title="Time range selector (with #total data entries inside)" id="timepicker">
                     <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
                   </ChartBorder>
-                  <ChartBorder title="Word or ngram frequency comparison">
+                  <ChartBorder title="Word or ngram frequency comparison" id="wordchart">
                     <TwoWordColumnsBarChart company_left={this.state.company_left} company_right={this.state.company_right} text={this.state.text} tfidfType={this.state.tfidfType} />
                   </ChartBorder>
                 </AnalysisCalculator>
@@ -140,7 +159,7 @@ export default class TextComparison extends React.Component {
             )
         }
 
-        <div style={{position: 'absolute', bottom: '100%', left: '100%', cursor: 'pointer'}}>
+        <div style={{position: 'absolute', bottom: '100%', left: '100%', cursor: 'pointer'}} id="settingsbutton">
           <SettingsIcon onClick={() => {this.setState(s => ({...s, modalOpen: true}))}} />
         </div>
 

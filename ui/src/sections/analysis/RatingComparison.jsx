@@ -34,23 +34,27 @@ const starscharts = {
 const steps = [
   {
     target: '#timepicker',
-    content: "Choose here a time range to observe. The line shown inside indecates the amount of messages over time. If you narrow your search space to the last months you'll probably get more accurate results as there are more answers." ,
+    content: "Choose here a time range to observe. The line shown inside indicates the amount of messages over time. If you narrow your search space to the last months you'll probably get more accurate results as there are more reviews in the dataset." ,
   },
   {
     target: '#timechart',
-    content: "This chart will display again teh amount of information over time but separated by company."
+    content: "This chart will display again the amount of information over time but separated by company."
   },
   {
     target: '#radarchart',
-    content: "For the selected time frame the average of each company on each category will be computed and displayed on this chart. Don't forget to click on the rating labels to change the remaining graphs."
+    content: "For the selected time frame the average of each company on each category will be computed and displayed on this chart. Don't forget to click on the rating labels to change the rating filters for the remaining graphs."
   },
   {
     target: '#stardensitychart',
-    content: "This chart will show the distribution of stars (what percentage of the ratings given were 5,4,etc...) for each company. There are several alternatives to this chart that can be explored in thids page's settings."
+    content: "This chart will show the distribution of stars (what percentage of the ratings given were 5,4,etc...) for each company. There are several alternatives to this chart that can be explored in this page's settings."
   },
   {
     target: '#timeaverage',
     content: "This last chart can show you the evolution of the average for a given company, over time. Gaps appear where there is no data."
+  },
+  {
+    target: '#settingsbutton',
+    content: 'Here are the settings.'
   }
 ]
 
@@ -99,7 +103,7 @@ export default class ReviewComparison extends React.Component {
 
     return (
       <div style={{position: 'relative'}}>
-        <Joyride steps={steps} disableBeacon={true} continuous={true}/>
+        <Joyride steps={steps} disableBeacon={true} continuous={true} scrollToFirstStep={true}/>
         <AnalysisContext.Provider value={new_context}>
           <AnalysisCalculator>
             <ChartBorder title="Company filter">
@@ -146,7 +150,7 @@ export default class ReviewComparison extends React.Component {
           </AnalysisCalculator>
         </AnalysisContext.Provider>
 
-        <div style={{position: 'absolute', bottom: '100%', left: '100%', cursor: 'pointer'}}>
+        <div style={{position: 'absolute', bottom: '100%', left: '100%', cursor: 'pointer'}} id="settingsbutton">
           <SettingsIcon onClick={() => {this.setState(s => ({...s, modalOpen: true}))}} />
         </div>
 
