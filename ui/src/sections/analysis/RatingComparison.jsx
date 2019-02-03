@@ -9,6 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import Checkbox from '@material-ui/core/Checkbox';
+import Joyride from 'react-joyride';
 
 import { AnalysisContext } from './AnalysisDataProvider'
 import AnalysisCalculator from './AnalysisCalculator'
@@ -28,6 +29,30 @@ const starscharts = {
   'area': RatingAreaChart,
   'bar': RatingStackedBarChart
 }
+
+
+const steps = [
+  {
+    target: '#timepicker',
+    content: "Choose here a time range to observe. The line shown inside indecates the amount of messages over time. If you narrow your search space to the last months you'll probably get more accurate results as there are more answers." ,
+  },
+  {
+    target: '#timechart',
+    content: "This chart will display again teh amount of information over time but separated by company."
+  },
+  {
+    target: '#radarchart',
+    content: "For the selected time frame the average of each company on each category will be computed and displayed on this chart. Don't forget to click on the rating labels to change the remaining graphs."
+  },
+  {
+    target: '#stardensitychart',
+    content: "This chart will show the distribution of stars (what percentage of the ratings given were 5,4,etc...) for each company. There are several alternatives to this chart that can be explored in thids page's settings."
+  },
+  {
+    target: '#timeaverage',
+    content: "This last chart can show you the evolution of the average for a given company, over time. Gaps appear where there is no data."
+  }
+]
 
 
 export default class ReviewComparison extends React.Component {
@@ -74,13 +99,14 @@ export default class ReviewComparison extends React.Component {
 
     return (
       <div style={{position: 'relative'}}>
+        <Joyride steps={steps} disableBeacon={true} continuous={true}/>
         <AnalysisContext.Provider value={new_context}>
           <AnalysisCalculator>
             <ChartBorder title="Company filter">
               <div style={{textAlign: 'center'}}>
                 {
                   this.context.initial_filters.company.map(company => (
-                    <div style={{display: 'inline-block', marginLeft: 10, marginRight: 10}}>
+                    <div style={{display: 'inline-block', marginLeft: 10, marginRight: 10}} key={company}>
                       <Checkbox
                         checked={new_context.filters.company.indexOf(company) != -1}
                         onChange={e => {
@@ -96,25 +122,25 @@ export default class ReviewComparison extends React.Component {
                 }
               </div>
             </ChartBorder>
-            <ChartBorder title="Time range selector (with #total data entries inside)">
+            <ChartBorder title="Time range selector (with #total data entries inside)" id="timepicker">
               <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
             </ChartBorder>
-            <ChartBorder title="#data entries for each company along time">
+            <ChartBorder title="#data entries for each company along time" id="timechart">
               <TimeRatingChart rating={this.state.rating} count legend />
             </ChartBorder>
             <Grid container spacing={24} style={{marginTop: 0}}>
               <Grid item sm={12} md={6}>
-                <ChartBorder title="Average stars for each company in all ratings" >
+                <ChartBorder title="Average stars for each company in all ratings" id="radarchart">
                   <StarsRadarChart rating={this.state.rating} onRatingChange={this.setRating.bind(this)}/>
                 </ChartBorder>
               </Grid>
               <Grid item sm={12} md={6}>
-                <ChartBorder title={`Stars density distribution for selected rating (${this.state.rating})`} >
+                <ChartBorder title={`Stars density distribution for selected rating (${this.state.rating})`} id="stardensitychart" >
                   <Starschart rating={this.state.rating} />
                 </ChartBorder>
               </Grid>
             </Grid>
-            <ChartBorder title={`Average selected rating (${this.state.rating}), for each company, over time`}>
+            <ChartBorder title={`Average selected rating (${this.state.rating}), for each company, over time`} id="timeaverage">
               <TimeRatingChart rating={this.state.rating} />
             </ChartBorder>
           </AnalysisCalculator>

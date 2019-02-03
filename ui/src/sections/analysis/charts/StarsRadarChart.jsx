@@ -32,7 +32,7 @@ export default class StarsRadarChart extends React.Component {
               }}
               onClick={({value}) => this.props.onRatingChange(value)}
             />
-            <PolarRadiusAxis angle={30} domain={[0, 5]} ticks={[0,1,2,3,4,5]} />
+            <PolarRadiusAxis angle={30} domain={[0, 5]} />
             {
               company_list.map(company => (
                 <Radar name={company} dataKey={company} stroke={company_colors[company]} fill={company_colors[company]} key={company} fillOpacity={0.3} />
