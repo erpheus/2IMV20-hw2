@@ -43,7 +43,7 @@ export default class TimeRatingChart extends React.Component {
 
     return (
       <React.Fragment>
-        <div style={{margin: '0 auto'}}>
+        <div style={{margin: '0 auto', marginTop: 20, marginBottom: 15}}>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={timed_data.map(e => ({time: e.time, ...e.avgs[rating]}))} margin={{top: 10, right: 30, left: 0, bottom: 0}}>
               <CartesianGrid strokeDasharray="3 3"/>

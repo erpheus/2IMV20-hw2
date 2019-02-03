@@ -17,6 +17,7 @@ import RatingBubbleChart from './charts/RatingBubbleChart'
 import RatingStackedBarChart from './charts/RatingStackedBarChart'
 import TimeRatingChart from './charts/TimeRatingChart'
 import TimePicker from './charts/TimePicker'
+import ChartBorder from './charts/ChartBorder'
 
 import './charts/charts.css'
 
@@ -74,17 +75,27 @@ export default class ReviewComparison extends React.Component {
       <div style={{position: 'relative'}}>
         <AnalysisContext.Provider value={new_context}>
           <AnalysisCalculator>
-            <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
-            <TimeRatingChart rating={this.state.rating} count legend />
-            <Grid container spacing={24} style={{marginTop: 30}}>
-              <Grid item sm={12} lg={6}>
-                <StarsRadarChart rating={this.state.rating} onRatingChange={this.setRating.bind(this)}/>
+            <ChartBorder title="Time range selector (with #total data entries inside)">
+              <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
+            </ChartBorder>
+            <ChartBorder title="#data entries for each company along time">
+              <TimeRatingChart rating={this.state.rating} count legend />
+            </ChartBorder>
+            <Grid container spacing={24} style={{marginTop: 0}}>
+              <Grid item sm={12} md={6}>
+                <ChartBorder title="Average stars for each company in all ratings" >
+                  <StarsRadarChart rating={this.state.rating} onRatingChange={this.setRating.bind(this)}/>
+                </ChartBorder>
               </Grid>
-              <Grid item sm={12} lg={6}>
-                <Starschart rating={this.state.rating} />
+              <Grid item sm={12} md={6}>
+                <ChartBorder title="Stars density distribution for selected rating" >
+                  <Starschart rating={this.state.rating} />
+                </ChartBorder>
               </Grid>
             </Grid>
-            <TimeRatingChart rating={this.state.rating} />
+            <ChartBorder title="Average selected rating stars, for each company, over time">
+              <TimeRatingChart rating={this.state.rating} />
+            </ChartBorder>
           </AnalysisCalculator>
         </AnalysisContext.Provider>
 

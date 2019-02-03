@@ -14,6 +14,7 @@ import AnalysisCalculator from './AnalysisCalculator'
 import TwoWordColumnsBarChart from './charts/TwoWordColumnsBarChart'
 import TimeRatingChart from './charts/TimeRatingChart'
 import TimePicker from './charts/TimePicker'
+import ChartBorder from './charts/ChartBorder'
 
 import './charts/charts.css'
 
@@ -125,8 +126,12 @@ export default class TextComparison extends React.Component {
             ? (
               <AnalysisContext.Provider value={new_context}>
                 <AnalysisCalculator>
-                  <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
-                  <TwoWordColumnsBarChart company_left={this.state.company_left} company_right={this.state.company_right} text={this.state.text} tfidfType={this.state.tfidfType} />
+                  <ChartBorder title="Time range selector (with #total data entries inside)">
+                    <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
+                  </ChartBorder>
+                  <ChartBorder title="Word or ngram frequency comparison">
+                    <TwoWordColumnsBarChart company_left={this.state.company_left} company_right={this.state.company_right} text={this.state.text} tfidfType={this.state.tfidfType} />
+                  </ChartBorder>
                 </AnalysisCalculator>
               </AnalysisContext.Provider>
             )
@@ -146,21 +151,22 @@ export default class TextComparison extends React.Component {
           onClose={() => {this.setState(s => ({...s, modalOpen: false}))}}
         >
           <Paper style={{position: 'absolute', top: 'calc(50% - 100px)', left: 'calc(50% - 200px)', height: 200, width: 400, padding: 40}}>
+            <Typography variant="h5" gutterBottom>Text comparison options</Typography>
             <div style={{marginLeft: 20, marginRight: 20, display: 'inline-block'}}>
-            <InputLabel shrink style={{marginRight: 20}}>
-                Tf-idf type
-            </InputLabel>
-            <Select
-              value={this.state.tfidfType}
-              onChange={e => {this.setState(s => ({...s, tfidfType: e.target.value}))}}
-              displayEmpty
-            >
-              <MenuItem value={'normal'}>Normal</MenuItem>
-              <MenuItem value={'ngram2'}>With 2-grams</MenuItem>
-              <MenuItem value={'ngram3'}>With 3-grams</MenuItem>
-              <MenuItem value={'ngram4'}>With 4-grams</MenuItem>
-            </Select>
-          </div>
+              <InputLabel shrink style={{marginRight: 20}}>
+                  Tf-idf type
+              </InputLabel>
+              <Select
+                value={this.state.tfidfType}
+                onChange={e => {this.setState(s => ({...s, tfidfType: e.target.value}))}}
+                displayEmpty
+              >
+                <MenuItem value={'normal'}>Normal</MenuItem>
+                <MenuItem value={'ngram2'}>With 2-grams</MenuItem>
+                <MenuItem value={'ngram3'}>With 3-grams</MenuItem>
+                <MenuItem value={'ngram4'}>With 4-grams</MenuItem>
+              </Select>
+            </div>
           </Paper>
         </Modal>
       </div>

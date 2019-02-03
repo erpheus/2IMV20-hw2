@@ -7,12 +7,12 @@ export const AnalysisChoosingContext = React.createContext(null);
 
 
 const CompanyColors = {
-  facebook: '#225ebf',
-  amazon: '#ffdd49',
-  netflix: '#f44522',
-  google: '#449b39',
-  microsoft: '#6dffe4',
-  apple: '#f740d2'
+  facebook: '#717ccd',
+  amazon: '#c3843e',
+  netflix: '#cc535c',
+  google: '#7ca343',
+  microsoft: '#bd5db0',
+  apple: '#49ae8a'
 }
 
 
