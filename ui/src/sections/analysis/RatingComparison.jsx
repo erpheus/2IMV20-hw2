@@ -35,7 +35,7 @@ export default class ReviewComparison extends React.Component {
       new_filters: null,
       rating: 'overall-ratings',
       modalOpen: false,
-      starschart: 'bubble'
+      starschart: 'bar'
     }
   }
 
