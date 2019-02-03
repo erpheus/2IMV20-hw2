@@ -63,5 +63,8 @@ module.exports = {
       '~': path.resolve('./src'),
       'react-dom': '@hot-loader/react-dom'
     }
+  },
+  node: {
+    fs: 'empty'
   }
 };

@@ -56,11 +56,13 @@ export default class AnalysisCalculator extends React.Component {
 
   averages(csv_data, filters) {
     const variables = filters.rating;
+    const text_variables = filters.text;
     const companies = filters.company;
 
     const group_variable = "company"
     const groups = companies;
     const avgs = {};
+    const all_text = {};
 
     variables.forEach(vname => {
       avgs[vname] = {total_count: 0}
@@ -73,7 +75,15 @@ export default class AnalysisCalculator extends React.Component {
       })
     });
 
+    text_variables.forEach(vname => {
+      all_text[vname] = {}
+      groups.forEach(gname => {
+        all_text[vname][gname] = ""
+      })
+    })
+
     let total_count = 0;
+
     for (var i = 0; i < csv_data.length; i++) {
       let at_least_one = false;
       variables.forEach(vname => {
@@ -85,6 +95,9 @@ export default class AnalysisCalculator extends React.Component {
           avgs[vname][`${csv_data[i][group_variable]}_${Math.round(csv_data[i][vname])}`] += 1;
         }
         if (at_least_one) {total_count += 1}
+      })
+      text_variables.forEach(vname => {
+        all_text[vname][csv_data[i][group_variable]] += '\n' + csv_data[i][vname];
       })
     }
     const avgs_list = []
@@ -106,7 +119,7 @@ export default class AnalysisCalculator extends React.Component {
       })
       avgs_list.push(list_element);
     });
-    return {avgs, avgs_list, avgs_star_list, total_count}
+    return {avgs, avgs_list, avgs_star_list, total_count, text: all_text}
   }
 
   filterAverages(timeparts, filters) {
@@ -127,7 +140,7 @@ export default class AnalysisCalculator extends React.Component {
   }
 
   joinTwoAverages(avgs1, avgs2, filters) {
-    const res = {avgs: {}, avgs_list: [], avgs_star_list: {}}
+    const res = {avgs: {}, avgs_list: [], avgs_star_list: {}, text: {}}
     const companycounts = {};
     filters.rating.forEach(rating => {
       const avgs_rating = {};
@@ -160,6 +173,14 @@ export default class AnalysisCalculator extends React.Component {
       res.avgs[rating] = avgs_rating;
       res.avgs_list.push(avgs_list_rating)
       res.avgs_star_list[rating] = avgs_star_list_rating;
+    })
+
+    filters.text.forEach(textv => {
+      const combined_v_text = {};
+      filters.company.map(company => {
+        combined_v_text[company] = avgs1.text[textv][company] + '\n' + avgs2.text[textv][company]
+      })
+      res.text[textv] = combined_v_text;
     })
     return res;
   }

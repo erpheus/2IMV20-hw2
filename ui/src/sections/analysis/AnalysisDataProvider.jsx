@@ -83,6 +83,12 @@ export default class AnalysisDataProvider extends React.Component {
         "carrer-opportunities-stars",
         "comp-benefit-stars",
         "senior-mangemnet-stars"
+      ],
+      text: [
+        'summary',
+        'pros',
+        'cons',
+        'advice-to-mgmt'
       ]
     };
     this.setState((prev_state) => ({

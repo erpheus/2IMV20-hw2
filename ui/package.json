@@ -17,6 +17,7 @@
     "@material-ui/lab": "^3.0.0-alpha.29",
     "d3": "^5.8.0",
     "memoize-one": "^5.0.0",
+    "natural": "^0.6.3",
     "papaparse": "^4.6.3",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",

@@ -11,10 +11,7 @@ import Input from '@material-ui/core/Input';
 
 import { AnalysisContext } from './AnalysisDataProvider'
 import AnalysisCalculator from './AnalysisCalculator'
-import StarsRadarChart from './charts/StarsRadarChart'
-import RatingAreaChart from './charts/RatingAreaChart'
-import RatingBubbleChart from './charts/RatingBubbleChart'
-import RatingStackedBarChart from './charts/RatingStackedBarChart'
+import TwoWordColumnsBarChart from './charts/TwoWordColumnsBarChart'
 import TimeRatingChart from './charts/TimeRatingChart'
 import TimePicker from './charts/TimePicker'
 
@@ -28,6 +25,11 @@ export default class TextComparison extends React.Component {
     this.state = {
       new_filters: null,
       rating: 'overall-ratings',
+      modalOpen: false,
+      company_left: '',
+      company_right: '',
+      text: '',
+      tfidfType: 'ngram2'
     }
   }
 
@@ -52,6 +54,8 @@ export default class TextComparison extends React.Component {
       )
     }
 
+    const is_valid_configuration = this.state.company_left && this.state.company_right && this.state.text;
+
     let new_context = this.context;
     if (this.state.new_filters !== null) {
       new_context = {
@@ -62,12 +66,74 @@ export default class TextComparison extends React.Component {
 
     return (
       <div style={{position: 'relative'}}>
-        <AnalysisContext.Provider value={new_context}>
-          <AnalysisCalculator>
-            <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
-            
-          </AnalysisCalculator>
-        </AnalysisContext.Provider>
+        <div style={{textAlign: 'center', marginBottom: 20}}>
+          <div style={{marginLeft: 20, marginRight: 20, display: 'inline-block'}}>
+            <InputLabel shrink style={{marginRight: 20}}>
+                Company on the left
+            </InputLabel>
+            <Select
+              value={this.state.company_left}
+              onChange={e => {this.setState(s => ({...s, company_left: e.target.value}))}}
+              displayEmpty
+            >
+              <MenuItem value={''}>None</MenuItem>
+              {
+                this.context.initial_filters.company.map(company => (
+                  <MenuItem key={company} value={company}>{company}</MenuItem>    
+                ))
+              }
+            </Select>
+          </div>
+          <div style={{marginLeft: 20, marginRight: 20, display: 'inline-block'}}>
+            <InputLabel shrink style={{marginRight: 20}}>
+                Company on the right
+            </InputLabel>
+            <Select
+              value={this.state.company_right}
+              onChange={e => {this.setState(s => ({...s, company_right: e.target.value}))}}
+              displayEmpty
+            >
+              <MenuItem value={''}>None</MenuItem>
+              {
+                this.context.initial_filters.company.filter(company => company != this.state.company_left).map(company => (
+                  <MenuItem key={company} value={company}>{company}</MenuItem>    
+                ))
+              }
+            </Select>
+          </div>
+          <div style={{marginLeft: 20, marginRight: 20, display: 'inline-block'}}>
+            <InputLabel shrink style={{marginRight: 20}}>
+                Text variable to compare
+            </InputLabel>
+            <Select
+              value={this.state.text}
+              onChange={e => {this.setState(s => ({...s, text: e.target.value}))}}
+              displayEmpty
+            >
+              <MenuItem value={''}>None</MenuItem>
+              {
+                this.context.initial_filters.text.map(v => (
+                  <MenuItem key={v} value={v}>{v}</MenuItem>    
+                ))
+              }
+            </Select>
+          </div>
+        </div>
+
+        {
+          is_valid_configuration
+            ? (
+              <AnalysisContext.Provider value={new_context}>
+                <AnalysisCalculator>
+                  <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
+                  <TwoWordColumnsBarChart company_left={this.state.company_left} company_right={this.state.company_right} text={this.state.text} tfidfType={this.state.tfidfType} />
+                </AnalysisCalculator>
+              </AnalysisContext.Provider>
+            )
+            : (
+              <Typography>You must choose two companies and a text variable for this comparison to show.</Typography>
+            )
+        }
 
         <div style={{position: 'absolute', bottom: '100%', left: '100%', cursor: 'pointer'}}>
           <SettingsIcon onClick={() => {this.setState(s => ({...s, modalOpen: true}))}} />
@@ -80,7 +146,21 @@ export default class TextComparison extends React.Component {
           onClose={() => {this.setState(s => ({...s, modalOpen: false}))}}
         >
           <Paper style={{position: 'absolute', top: 'calc(50% - 100px)', left: 'calc(50% - 200px)', height: 200, width: 400, padding: 40}}>
-            <Typography>No settings here at the moment</Typography>
+            <div style={{marginLeft: 20, marginRight: 20, display: 'inline-block'}}>
+            <InputLabel shrink style={{marginRight: 20}}>
+                Tf-idf type
+            </InputLabel>
+            <Select
+              value={this.state.tfidfType}
+              onChange={e => {this.setState(s => ({...s, tfidfType: e.target.value}))}}
+              displayEmpty
+            >
+              <MenuItem value={'normal'}>Normal</MenuItem>
+              <MenuItem value={'ngram2'}>With 2-grams</MenuItem>
+              <MenuItem value={'ngram3'}>With 3-grams</MenuItem>
+              <MenuItem value={'ngram4'}>With 4-grams</MenuItem>
+            </Select>
+          </div>
           </Paper>
         </Modal>
       </div>
