@@ -8,6 +8,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import { AnalysisContext } from './AnalysisDataProvider'
 import AnalysisCalculator from './AnalysisCalculator'
@@ -75,6 +76,26 @@ export default class ReviewComparison extends React.Component {
       <div style={{position: 'relative'}}>
         <AnalysisContext.Provider value={new_context}>
           <AnalysisCalculator>
+            <ChartBorder title="Company filter">
+              <div style={{textAlign: 'center'}}>
+                {
+                  this.context.initial_filters.company.map(company => (
+                    <div style={{display: 'inline-block', marginLeft: 10, marginRight: 10}}>
+                      <Checkbox
+                        checked={new_context.filters.company.indexOf(company) != -1}
+                        onChange={e => {
+                          if (!e.target.checked) {
+                            this.filtersUpdate({company: new_context.filters.company.filter(c => c != company)}) 
+                          } else {
+                            this.filtersUpdate({company: new_context.filters.company.concat([company])})
+                          }
+                        }}
+                      />{company}
+                    </div>
+                  ))
+                }
+              </div>
+            </ChartBorder>
             <ChartBorder title="Time range selector (with #total data entries inside)">
               <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
             </ChartBorder>
@@ -88,12 +109,12 @@ export default class ReviewComparison extends React.Component {
                 </ChartBorder>
               </Grid>
               <Grid item sm={12} md={6}>
-                <ChartBorder title="Stars density distribution for selected rating" >
+                <ChartBorder title={`Stars density distribution for selected rating (${this.state.rating})`} >
                   <Starschart rating={this.state.rating} />
                 </ChartBorder>
               </Grid>
             </Grid>
-            <ChartBorder title="Average selected rating stars, for each company, over time">
+            <ChartBorder title={`Average selected rating (${this.state.rating}), for each company, over time`}>
               <TimeRatingChart rating={this.state.rating} />
             </ChartBorder>
           </AnalysisCalculator>
