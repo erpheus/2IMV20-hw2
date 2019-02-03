@@ -77,10 +77,10 @@ export default class ReviewComparison extends React.Component {
             <TimePicker onRangeChange={(since, to) => this.filtersUpdate({time: {since, to}})} />
             <TimeRatingChart rating={this.state.rating} count legend />
             <Grid container spacing={24} style={{marginTop: 30}}>
-              <Grid item xs={12} sm={6}>
+              <Grid item sm={12} lg={6}>
                 <StarsRadarChart rating={this.state.rating} onRatingChange={this.setRating.bind(this)}/>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item sm={12} lg={6}>
                 <Starschart rating={this.state.rating} />
               </Grid>
             </Grid>

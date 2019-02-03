@@ -39,8 +39,8 @@ export default class RatingStackedBarChart extends React.Component {
 
     return (
       <React.Fragment>
-        <div style={{margin: '0 auto'}}>
-          <ResponsiveContainer width="100%" height={300}>
+        <div style={{margin: '0 auto', marginTop: 25}}>
+          <ResponsiveContainer width="100%" height={350}>
             <BarChart data={all_flat_data} barGap={-49}>
               <XAxis padding={{left: 30, right: 30}} dataKey="company" type="category" />
               <YAxis type="number" domain={[0, 1]} tickFormatter={(value) => Number.isNaN(value) ? '-' : (''+(100*value)).slice(0,4) + '%'}/>

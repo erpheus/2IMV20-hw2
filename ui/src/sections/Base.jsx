@@ -9,7 +9,7 @@ import './base.css'
 
 import Home from './home/Home'
 
-import Analysis1 from './analysis/Analysis1'
+import DataSummary from './analysis/DataSummary'
 import RatingComparison from './analysis/RatingComparison'
 import TextComparison from './analysis/TextComparison'
 import AnalysisDataProvider from './analysis/AnalysisDataProvider'
@@ -26,7 +26,7 @@ export default function Base() {
           <Route path="/" render={({ location }) => (
             <Tabs value={location.pathname} variant="fullWidth">
               <Tab label="Home" component={Link} to={'/'} value={'/'}/>
-              <Tab label="Data summary" component={Link} to={'/analysis1'} value={'/analysis1'}/>
+              <Tab label="Data summary" component={Link} to={'/analysis_summary'} value={'/analysis_summary'}/>
               <Tab label="Rating Analysis" component={Link} to={'/analysis_rating'} value={'/analysis_rating'}/>
               <Tab label="Text Analysis" component={Link} to={'/analysis_text'} value={'/analysis_text'}/>
             </Tabs>
@@ -34,7 +34,7 @@ export default function Base() {
           <div style={{padding: 40}}>
             <AnalysisDataProvider>
               <Route exact={true} path="/" component={Home}/>
-              <Route path="/analysis1" component={Analysis1}/>
+              <Route path="/analysis_summary" component={DataSummary}/>
               <Route path="/analysis_rating" component={RatingComparison}/>
               <Route path="/analysis_text" component={TextComparison} />
             </AnalysisDataProvider>
