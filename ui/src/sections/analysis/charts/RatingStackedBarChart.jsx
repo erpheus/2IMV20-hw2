@@ -34,7 +34,7 @@ export default class RatingStackedBarChart extends React.Component {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={all_flat_data} barGap={-49}>
               <XAxis padding={{left: 30, right: 30}} dataKey="company" allowDuplicatedCategory={true} type="number" domain={[0, company_list.length-1]} ticks={[...Array(company_list.length).keys()]} tickFormatter={(i) => company_list[i]} />
-              <YAxis />
+              <YAxis type="number"/>
               <Tooltip />
               { company_list.map( (company, i) => (
                 [1,2,3,4,5].map( stars => (

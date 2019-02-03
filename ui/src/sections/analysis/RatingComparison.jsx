@@ -104,7 +104,7 @@ export default class ReviewComparison extends React.Component {
             </InputLabel>
             <Select
               value={this.state.starschart}
-              onChange={e => {this.setState(s => {console.log(e); return ({...s, starschart: e.target.value})})}}
+              onChange={e => {this.setState(s => ({...s, starschart: e.target.value}))}}
               displayEmpty
               name="starschart"
             >

@@ -25,7 +25,7 @@ export default class RatingAreaChart extends React.Component {
               <CartesianGrid strokeDasharray="3 3"/>
               <XAxis dataKey="stars"/>
               <YAxis domain={[0,1]}/>
-              <Tooltip/>
+              <Tooltip formatter={(value) => Number.isNaN(value) ? '-' : (''+(100*value)).slice(0,4) + '%'}/>
               {company_list.map(company => (
                 <Area type='monotone' dataKey={company} stroke={company_colors[company]} fill={company_colors[company]} key={company} fillOpacity={0.3}  />
               ))}

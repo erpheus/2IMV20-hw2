@@ -36,6 +36,11 @@ export default class TimeRatingChart extends React.Component {
 
     const curve_type = d3.curveBundle.beta(.75);
 
+    const tooltip_options = {}
+    if (!this.props.count) {
+      tooltip_options["formatter"]=((value) => Number.isNaN(value) ? '-' : (''+value).slice(0,4))
+    }
+
     return (
       <React.Fragment>
         <div style={{margin: '0 auto'}}>
@@ -44,7 +49,7 @@ export default class TimeRatingChart extends React.Component {
               <CartesianGrid strokeDasharray="3 3"/>
               <XAxis dataKey="time"/>
               <YAxis domain={[this.state.min, this.state.max]}/>
-              <Tooltip/>
+              <Tooltip {...tooltip_options}/>
               {company_list.map(company => (
                 <Line legendType="square" name={company} type={curve_type} dataKey={this.data_key_f(company)} stroke={company_colors[company]} key={company} dot={false} activeDot={true} />
               ))}
